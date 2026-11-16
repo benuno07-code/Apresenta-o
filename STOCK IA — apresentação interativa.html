@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>STOCK IA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Space+Grotesk:wght@500..700&display=swap">
+<style>
+:root{--bg:#F3EFE8;--fg:#14101A;--card:#FFFFFF;--mut:#5D5566;--ac:#1F7A44;--ac2:#9B2A4A;--warn:#A86400;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14101A;--fg:#F3EFE8;--card:#241B2D;--mut:#B8AFC2;--ac:#5BD08A;--ac2:#E0678A;--warn:#F0B35A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14101A;--fg:#F3EFE8;--card:#241B2D;--mut:#B8AFC2;--ac:#5BD08A;--ac2:#E0678A;--warn:#F0B35A;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,sans-serif;font-size:clamp(15px,2.2vw,22px);line-height:1.45}
+h1,h2,h3{font-family:'Space Grotesk',Inter,sans-serif;margin:0;line-height:1.1}
+h1{font-size:clamp(52px,12vw,150px)}h2{font-size:clamp(28px,5vw,60px)}h3{font-size:clamp(18px,2.4vw,28px)}
+p{margin:0}
+main{position:relative;flex:1;min-height:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;gap:clamp(12px,2.2vw,26px);padding:clamp(18px,4.5vw,64px);overflow:auto}
+.slide.on{display:flex}
+.on>*{animation:up .6s both;animation-delay:calc(var(--i,0)*.12s)}
+@keyframes up{from{opacity:0;transform:translateY(26px)}}
+.tag{font-size:.8em;letter-spacing:.14em;font-weight:600;color:var(--ac)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.card{background:var(--card);border-radius:18px;border-top:6px solid var(--ac2);padding:clamp(16px,2.4vw,30px);display:flex;flex-direction:column;gap:12px}
+.mut{color:var(--mut)}
+.btn{font:inherit;min-height:44px;padding:8px 18px;border-radius:999px;border:2px solid var(--ac);background:transparent;color:var(--fg);cursor:pointer;transition:background .2s,transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn[aria-pressed=true]{background:var(--ac);color:var(--bg)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+code,.code{font-family:ui-monospace,Menlo,monospace}
+.code{background:#14101A;color:#5BD08A;padding:14px 18px;border-radius:12px;font-size:.95em;overflow-x:auto;white-space:nowrap}
+.badge{align-self:flex-start;padding:8px 18px;border-radius:999px;font-weight:600;background:var(--ac2);color:#fff;transition:background .3s}
+.badge.ok{background:var(--ac);color:var(--bg)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:clamp(70px,14vw,170px)}
+.bars i{flex:1;background:var(--ac);border-radius:6px 6px 0 0;animation:grow 1.2s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--k)*.12s + .4s);height:var(--h);transform-origin:bottom}
+@keyframes grow{from{transform:scaleY(0)}}
+.reveal{text-align:left;font:inherit;color:inherit;cursor:pointer;border:0;border-top:6px solid var(--ac2)}
+.reveal .more{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s,opacity .4s;color:var(--mut)}
+.reveal.open .more{max-height:120px;opacity:1}
+.num{font-family:'Space Grotesk',sans-serif;font-size:clamp(44px,8vw,90px);font-weight:600;color:var(--ac)}
+.track{position:relative;height:22px;border-radius:11px;background:color-mix(in srgb,var(--fg) 12%,transparent);overflow:visible}
+.fill{height:100%;border-radius:11px;background:var(--ac);width:0;transition:width .5s,background .3s}
+.mark{position:absolute;top:-8px;bottom:-8px;width:3px;background:var(--ac2);left:33.3%}
+label{display:flex;justify-content:space-between;gap:12px;font-size:.9em}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:32px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font:inherit;font-size:.85em;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid var(--mut);background:var(--card);color:var(--fg);cursor:pointer}
+.ask{background:var(--card);border-radius:14px;padding:14px 18px;min-height:3em;border:2px solid var(--ac)}
+.big{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,4.2vw,52px);font-weight:600;color:var(--ac);line-height:1.15}
+svg text{fill:var(--fg);font-size:12px;font-family:Inter,sans-serif;pointer-events:none}
+svg .e{stroke:var(--mut);stroke-width:2;opacity:.5;transition:all .3s}
+svg .e.hl{stroke:var(--ac2);stroke-width:4;opacity:1}
+svg .n{fill:var(--card);stroke:var(--ac);stroke-width:3;cursor:pointer;transition:fill .3s}
+svg .n.hl{fill:var(--ac2)}
+nav{display:flex;align-items:center;gap:12px;padding:10px clamp(14px,3vw,40px);position:relative}
+#bar{position:absolute;top:0;left:0;height:4px;background:var(--ac);transition:width .4s}
+nav .btn{min-width:44px;padding:8px 14px}
+nav .btn:disabled{opacity:.3;cursor:default}
+#cnt{margin-left:auto;color:var(--mut);font-size:.85em}
+</style>
+</head>
+<body>
+<main>
+
+<section class="slide on">
+<p class="tag">MATEMÁTICA COMPUTACIONAL</p>
+<h1>STOCK IA</h1>
+<p style="max-width:34ch">Sistema de gerenciamento de estoque para pequenas empresas, com regras matemáticas e inteligência artificial.</p>
+<div class="bars" aria-hidden="true" style="max-width:520px"><i style="--h:40%;--k:0"></i><i style="--h:65%;--k:1"></i><i style="--h:50%;--k:2"></i><i style="--h:85%;--k:3"></i><i style="--h:60%;--k:4"></i><i style="--h:95%;--k:5"></i><i style="--h:75%;--k:6"></i></div>
+<p class="mut">Cauê · Bruno · Bueno · Evandro · Bernardo. Use as setas ou deslize para avançar.</p>
+</section>
+
+<section class="slide">
+<p class="tag">O PROBLEMA</p>
+<h2>Estoque controlado à mão dá problema</h2>
+<p class="mut">Toque em cada cartão.</p>
+<div class="row">
+<button class="card reveal"><h3>Falta de mercadoria</h3><p class="more">O produto acaba e ninguém percebeu a tempo.</p></button>
+<button class="card reveal"><h3>Excesso de produtos</h3><p class="more">Dinheiro parado na prateleira.</p></button>
+<button class="card reveal"><h3>Compra sem critério</h3><p class="more">Fica difícil saber quando repor.</p></button>
+</div>
+<p>Queríamos organizar o estoque e usar matemática para apoiar as decisões do negócio.</p>
+</section>
+
+<section class="slide">
+<p class="tag">FUNCIONALIDADES</p>
+<h2>O que o sistema faz</h2>
+<div class="row">
+<div class="card"><h3>Produtos</h3><p>Cadastrar, editar e pesquisar mercadorias.</p></div>
+<div class="card"><h3>Movimentações</h3><p class="mut">Teste com um produto de exemplo:</p><div class="num" id="qty">40</div><div class="btns"><button class="btn" id="in">Entrada +10</button><button class="btn" id="out">Saída −5</button></div></div>
+<div class="card"><h3>Dashboard</h3><p>Indicadores para o administrador ver como está o estoque.</p><div class="bars" aria-hidden="true"><i style="--h:55%;--k:0"></i><i style="--h:90%;--k:1"></i><i style="--h:35%;--k:2"></i><i style="--h:70%;--k:3"></i></div></div>
+</div>
+</section>
+
+<section class="slide">
+<p class="tag">MATEMÁTICA COMPUTACIONAL</p>
+<h2>Álgebra booleana e grafos no estoque</h2>
+<div class="row">
+<div class="card"><h3>Álgebra booleana</h3>
+<div class="btns"><button class="btn" id="bA" aria-pressed="true"></button><button class="btn" id="bB" aria-pressed="true"></button></div>
+<div class="btns" role="group" aria-label="Operador"><button class="btn" data-op="AND" aria-pressed="true">AND</button><button class="btn" data-op="OR" aria-pressed="false">OR</button><button class="btn" data-op="NOT" aria-pressed="false">NOT</button></div>
+<div class="code" id="expr"></div><div class="badge" id="res"></div></div>
+<div class="card"><h3>Teoria dos grafos</h3><p class="mut">Toque em um nó: o caminho fornecedor, produto e estoque acende.</p>
+<svg id="g" viewBox="0 0 360 220" role="img" aria-label="Grafo de fornecedores, produtos e estoque" style="width:100%;height:auto"></svg></div>
+</div>
+</section>
+
+<section class="slide">
+<p class="tag">INTELIGÊNCIA E ANÁLISES</p>
+<h2>Decisões a partir do histórico</h2>
+<div class="row">
+<div class="card"><h3>Análise de risco</h3>
+<label>Estoque atual <b id="v1"></b></label><input type="range" id="r1" min="0" max="200" value="60">
+<label>Consumo médio por dia <b id="v2"></b></label><input type="range" id="r2" min="1" max="20" value="8">
+<label>Prazo de reposição (dias) <b id="v3"></b></label><input type="range" id="r3" min="1" max="15" value="5"></div>
+<div class="card"><h3>Quanto tempo o produto dura</h3><div class="num" id="days"></div>
+<div class="track"><div class="fill" id="fill"></div><div class="mark" title="Prazo de reposição"></div></div>
+<p id="status" style="font-weight:600"></p><p class="mut" id="hint"></p>
+<p class="mut" style="font-size:.8em">Dias de estoque = estoque ÷ consumo. A linha marca o prazo de reposição. Os limites de alerta aqui são ilustrativos.</p></div>
+</div>
+<p>O sistema também sugere reposição e promoção para produtos parados ou em excesso.</p>
+</section>
+
+<section class="slide">
+<p class="tag">TECNOLOGIA E CONCLUSÃO</p>
+<h2>Como foi feito</h2>
+<div class="row">
+<div class="card"><h3>Base</h3><p>HTML, CSS e JavaScript, com armazenamento no navegador.</p></div>
+<div class="card"><h3>Entrada inteligente</h3><p>Lê informações de notas fiscais e prepara os produtos para o estoque.</p></div>
+<div class="card"><h3>Central de inteligência</h3><p>Perguntas em linguagem natural, com a API da OpenAI (opcional).</p></div>
+</div>
+<div class="chips" id="chips"></div>
+<div class="ask" id="ask" aria-live="polite"></div>
+<p class="big">Gestão, matemática computacional e IA na mesma plataforma.</p>
+</section>
+
+</main>
+<nav>
+<div id="bar"></div>
+<button class="btn" id="prev" aria-label="Slide anterior">←</button>
+<button class="btn" id="next" aria-label="Próximo slide">→</button>
+<button class="btn" id="theme" aria-label="Alternar tema">◐</button>
+<span id="cnt"></span>
+</nav>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const slides=$$('.slide');let cur=0;
+function go(n){n=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('on',i===n));[...slides[n].children].forEach((c,i)=>c.style.setProperty('--i',i));cur=n;
+$('#bar').style.width=((n+1)/slides.length*100)+'%';$('#cnt').textContent=(n+1)+' / '+slides.length;$('#prev').disabled=n===0;$('#next').disabled=n===slides.length-1;slides[n].scrollTop=0;
+try{history.replaceState(null,'','#slide-'+(n+1))}catch(e){}}
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;
+if(['ArrowRight','PageDown'].includes(e.key)||(e.key===' '&&!e.target.matches('button')))go(cur+1);
+else if(['ArrowLeft','PageUp'].includes(e.key))go(cur-1);else if(e.key==='Home')go(0);else if(e.key==='End')go(slides.length-1)});
+let tx=null;document.addEventListener('touchstart',e=>{tx=e.target.closest('input,svg')?null:e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>70)go(cur+(d<0?1:-1))});
+$('#theme').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'};
+$$('.reveal').forEach(c=>c.onclick=()=>c.classList.toggle('open'));
+// movimentações
+let q=40;function showQ(){const el=$('#qty'),t0=+el.textContent,t1=q,st=performance.now();(function f(t){const k=Math.min(1,(t-st)/350);el.textContent=Math.round(t0+(t1-t0)*k);if(k<1)requestAnimationFrame(f)})(st)}
+$('#in').onclick=()=>{q+=10;showQ()};$('#out').onclick=()=>{q=Math.max(0,q-5);showQ()};
+// booleana
+let A=true,B=true,op='AND';
+function bool(){const r=op==='AND'?A&&B:op==='OR'?A||B:!A;
+$('#bA').textContent='produtoAtivo: '+(A?'verdadeiro':'falso');$('#bA').setAttribute('aria-pressed',A);
+$('#bB').textContent='estoqueAtual > 0: '+(B?'verdadeiro':'falso');$('#bB').setAttribute('aria-pressed',B);
+$('#expr').textContent=op==='AND'?'produtoAtivo && estoqueAtual > 0':op==='OR'?'produtoAtivo || estoqueAtual > 0':'!produtoAtivo';
+const b=$('#res');b.classList.toggle('ok',r);b.textContent=op==='AND'?(r?'Venda liberada':'Venda bloqueada'):(r?'Verdadeiro':'Falso')}
+$('#bA').onclick=()=>{A=!A;bool()};$('#bB').onclick=()=>{B=!B;bool()};
+$$('[data-op]').forEach(b=>b.onclick=()=>{op=b.dataset.op;$$('[data-op]').forEach(x=>x.setAttribute('aria-pressed',x===b));bool()});bool();
+// grafo
+const N={F1:[50,55,'Fornec. A'],F2:[50,165,'Fornec. B'],P1:[180,30,'Produto 1'],P2:[180,110,'Produto 2'],P3:[180,190,'Produto 3'],L:[310,110,'Estoque']};
+const E=[['F1','P1'],['F1','P2'],['F2','P2'],['F2','P3'],['P1','L'],['P2','L'],['P3','L']];
+const g=$('#g'),ns='http://www.w3.org/2000/svg',mk=(t,a)=>{const e=document.createElementNS(ns,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+const eEl=E.map(([a,b])=>{const l=mk('line',{class:'e',x1:N[a][0],y1:N[a][1],x2:N[b][0],y2:N[b][1]});g.append(l);return l});
+const nEl={};for(const k in N){const [x,y,t]=N[k];nEl[k]=mk('circle',{class:'n',cx:x,cy:y,r:24,tabindex:0,role:'button','aria-label':t});g.append(nEl[k]);const tx=mk('text',{x,y:y+4,'text-anchor':'middle'});tx.textContent=t.replace('Fornec. ','F ').replace('Produto ','P ').replace('Estoque','Est.');g.append(tx)}
+function reach(n,dir){const seen=new Set([n]);const st=[n];while(st.length){const c=st.pop();E.forEach(([a,b],i)=>{const [f,t]=dir?[a,b]:[b,a];if(f===c){seen.add(t);st.push(t)}})}return seen}
+function hl(n){const s=new Set([...reach(n,1),...reach(n,0)]);E.forEach(([a,b],i)=>eEl[i].classList.toggle('hl',s.has(a)&&s.has(b)&&(reach(n,1).has(a)&&reach(n,1).has(b)||reach(n,0).has(a)&&reach(n,0).has(b))));for(const k in nEl)nEl[k].classList.toggle('hl',s.has(k))}
+for(const k in nEl){nEl[k].onclick=()=>hl(k);nEl[k].onkeydown=e=>{if(e.key==='Enter')hl(k)}}
+// risco
+function risk(){const e=+$('#r1').value,c=+$('#r2').value,p=+$('#r3').value,d=e/c;
+$('#v1').textContent=e;$('#v2').textContent=c;$('#v3').textContent=p;
+$('#days').textContent=d.toFixed(1)+' dias';
+const f=$('#fill');f.style.width=Math.min(100,d/(p*3)*100)+'%';
+let s,col,h;if(d<=p){s='Risco: repor agora';col='var(--ac2)';h='O estoque acaba antes de a reposição chegar.'}
+else if(d<=p*2){s='Atenção: programar a compra';col='var(--warn)';h='A margem sobre o prazo de reposição é curta.'}
+else{s='Estoque com folga';col='var(--ac)';h=e>c*30?'Passa de 30 dias de consumo: vale pensar em promoção.':'Cobre o prazo de reposição com margem.'}
+f.style.background=col;$('#status').textContent=s;$('#status').style.color=col;$('#hint').textContent=h}
+['#r1','#r2','#r3'].forEach(i=>$(i).oninput=risk);risk();
+// perguntas
+const Q=['O que pode faltar?','O que está vendendo mais?','O que preciso repor?','Existem riscos?','Tenho produtos parados?','Resumo do estoque'];
+let ti;Q.forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.onclick=()=>{clearInterval(ti);const a=$('#ask');a.textContent='';let i=0;ti=setInterval(()=>{a.textContent=t.slice(0,++i);if(i>=t.length){clearInterval(ti);a.textContent=t+'  (no site, a resposta usa os dados reais do estoque)'}},35)};$('#chips').append(b)});
+$('#ask').textContent='Escolha uma pergunta para ver como ela aparece na Central de inteligência.';
+const m=/slide-(\d+)/.exec(location.hash);go(m?+m[1]-1:0);
+</script>
+</body>
+</html>
